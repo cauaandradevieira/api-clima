@@ -1,0 +1,6 @@
+# Backend (Java)
+api-clima-backend/target/
+api-clima-backend/.settings/
+
+# Frontend
+api-clima-frontend/node_modules/
