@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Clima</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .weather-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #72b6f0, #5a8fd8);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            display: none;
+            /* Inicialmente escondido */
+        }
+
+        .weather-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .temp {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .search-box {
+            max-width: 500px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container text-center">
+        <h1 class="mb-4">Consulta de Clima</h1>
+
+        <div class="search-box">
+            <div class="input-group mb-3">
+                <input type="text" id="cityInput" class="form-control" placeholder="Digite o nome da cidade"
+                    aria-label="Cidade">
+                <button class="btn btn-primary" type="button" id="searchBtn">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+        </div>
+
+        <div id="weatherCard" class="weather-card">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="weather-icon" id="weatherIcon">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="temp" id="temperature">--°C</div>
+                    <div class="weather-desc" id="weatherDescription">--</div>
+                </div>
+                <div class="col-md-6 text-start">
+                    <h3 id="cityName">--</h3>
+                    <p><i class="fas fa-tint"></i> Humidade: <span id="humidity">--</span>%</p>
+                    <p><i class="fas fa-wind"></i> Vento: <span id="windSpeed">--</span> km/h</p>
+                    <p><i class="fas fa-temperature-low"></i> Sensação: <span id="feelsLike">--</span>°C</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="errorMsg" class="alert alert-danger mt-3" style="display: none;"></div>
+    </div>
+
+    <!-- Bootstrap JS e Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchBtn = document.getElementById('searchBtn');
+            const cityInput = document.getElementById('cityInput');
+            const weatherCard = document.getElementById('weatherCard');
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Função para atualizar ícone do clima
+            function updateWeatherIcon(weatherDescription) {
+                const iconElement = document.getElementById('weatherIcon');
+                let iconClass = 'fa-cloud-sun'; // Ícone padrão
+
+                if (!weatherDescription) {
+                    iconElement.innerHTML = `<i class="fas ${iconClass}"></i>`;
+                    return;
+                }
+
+                const description = weatherDescription.toLowerCase();
+
+                if (description.includes('chuva')) {
+                    iconClass = 'fa-cloud-rain';
+                } else if (description.includes('nublado') || description.includes('neblina')) {
+                    iconClass = 'fa-cloud';
+                } else if (description.includes('sol')) {
+                    iconClass = 'fa-sun';
+                } else if (description.includes('tempestade')) {
+                    iconClass = 'fa-bolt';
+                } else if (description.includes('neve')) {
+                    iconClass = 'fa-snowflake';
+                }
+
+                iconElement.innerHTML = `<i class="fas ${iconClass}"></i>`;
+            }
+
+            // Função para exibir dados do clima
+            function displayWeather(weatherData) {
+                document.getElementById('cityName').textContent = weatherData.city || "Cidade desconhecida";
+                document.getElementById('temperature').textContent = `${weatherData.temp || '--'}°C`;
+                document.getElementById('weatherDescription').textContent = weatherData.description || "--";
+                document.getElementById('humidity').textContent = weatherData.humidity || "--";
+
+                // Campos opcionais (ajuste conforme sua API)
+                document.getElementById('windSpeed').textContent = weatherData.windSpeed || "--";
+                document.getElementById('feelsLike').textContent = weatherData.feelsLike || "--";
+
+                updateWeatherIcon(weatherData.description); // Chama a função que agora está definida
+                weatherCard.style.display = 'block';
+            }
+
+            // Função principal para buscar dados
+            async function fetchWeather() {
+                const city = cityInput.value.trim();
+                if (!city) {
+                    errorMsg.textContent = "Por favor, digite o nome de uma cidade";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                errorMsg.style.display = 'none';
+                const apiUrl = `http://localhost:8080/weather/${encodeURIComponent(city)}`;
+
+                try {
+                    const response = await fetch(apiUrl);
+
+                    if (!response.ok) {
+                        throw new Error(`Erro: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    displayWeather(data);
+
+                } catch (error) {
+                    errorMsg.textContent = `Não foi possível obter os dados da cidade. Erro: ${error.message}`;
+                    errorMsg.style.display = 'block';
+                    console.error('Erro detalhado:', error);
+                }
+            }
+
+            // Event listeners
+            searchBtn.addEventListener('click', fetchWeather);
+            cityInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') fetchWeather();
+            });
+        });
+    </script>
+</body>
+
+</html>
