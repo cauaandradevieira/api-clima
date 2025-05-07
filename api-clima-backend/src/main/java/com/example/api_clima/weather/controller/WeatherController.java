@@ -3,7 +3,6 @@ package com.example.api_clima.weather.controller;
 import com.example.api_clima.weather.model.entity.Weather;
 import com.example.api_clima.weather.services.WeatherService;
 
-import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,13 @@ public class WeatherController
     
     public ResponseEntity<?> findWeather(@PathVariable String cidade)
     {
-        Weather weather = weatherService.getWeather(cidade);
+        Weather weather = weatherService.findValidWeather(cidade);
         return ResponseEntity.ok(weather);
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> findAllWeather()
+    {
+        return ResponseEntity.ok( weatherService.findAll() );
     }
 }
