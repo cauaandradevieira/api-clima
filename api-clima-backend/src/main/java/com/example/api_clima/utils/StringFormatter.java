@@ -1,9 +1,6 @@
 package com.example.api_clima.utils;
 
 import org.springframework.util.StringUtils;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -18,9 +15,9 @@ public class StringFormatter
             .collect(Collectors.joining(" ")); // Rio De Janeiro
     }
 
-    public static String formatStringUrlEncoder(String city)
+    /*public static String formatStringUrlEncoder(String city)
     {
         city = formatStringCapalize(city);
         return URLEncoder.encode(city, StandardCharsets.UTF_8);
-    }
+    }*/
 }
