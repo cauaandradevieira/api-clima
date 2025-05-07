@@ -70,7 +70,7 @@ public class WeatherService implements IConstApi
         System.out.println("Nome da cidade parametro do metodo fetchAndSaveFromApi: " + city);
         System.out.println("-----------------------------------------------------------------");
 
-        String cityForApi = StringFormatter.formatStringUrlEncoder(city);
+        String cityForApi = StringFormatter.formatStringCapalize(city);
 
         System.out.println("Nome da cidade metodo StringFormatter: " + cityForApi);
         System.out.println("-----------------------------------------------------------------");
@@ -91,7 +91,6 @@ public class WeatherService implements IConstApi
             System.out.println("-----------------------------------------------------------------");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND , "city not found");
         }
-
 
         String cityForBd = StringFormatter.formatStringCapalize(city);
 
