@@ -20,6 +20,7 @@ public class StringFormatter
 
     public static String formatStringUrlEncoder(String city)
     {
+        city = formatStringCapalize(city);
         return URLEncoder.encode(city, StandardCharsets.UTF_8);
     }
 }
