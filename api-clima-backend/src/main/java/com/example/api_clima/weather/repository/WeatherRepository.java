@@ -1,6 +1,7 @@
 package com.example.api_clima.weather.repository;
 
 import com.example.api_clima.weather.model.entity.Weather;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +16,7 @@ public interface WeatherRepository extends JpaRepository< Weather, UUID >
 {
     Optional<Weather> findByCity(String city);
 
-    @Query("SELECT w FROM Weather w WHERE w.city = :city AND w.dateUpdatedAt >= :date")
+    @Query("SELECT w FROM Weather w WHERE lower(w.city) = lower(:city) AND w.dateUpdatedAt >= :date")
     Optional<Weather> findByValidWeather(@Param("city")String city,
                                          @Param("date")Instant date);
 
