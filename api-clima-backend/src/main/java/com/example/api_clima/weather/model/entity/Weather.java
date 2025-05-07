@@ -2,9 +2,6 @@ package com.example.api_clima.weather.model.entity;
 
 import com.example.api_clima.weather.model.dto.WeatherDTO;
 import jakarta.persistence.*;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
