@@ -2,6 +2,7 @@ package com.example.api_clima.weather.model.entity;
 
 import com.example.api_clima.weather.model.dto.WeatherDTO;
 import jakarta.persistence.*;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,10 +26,7 @@ public class Weather
     private Integer tempMin;
     private Integer tempMax;
 
-    @CreationTimestamp
     private Instant dateCreatedAt;
-
-    @UpdateTimestamp
     private Instant dateUpdatedAt;
 
     private String city;
@@ -43,9 +41,21 @@ public class Weather
         this.tempMin = weatherDTO.temperatureInfo().tempMin();
         this.tempMax = weatherDTO.temperatureInfo().tempMax();
         this.city = city;
+        this.dateCreatedAt = Instant.now();
+        this.dateUpdatedAt = Instant.now();
     }
 
     public Weather() {}
+
+    @Override
+    public String toString() {
+        return "Weather{" +
+                "id=" + id +
+                ", dateCreatedAt=" + dateCreatedAt +
+                ", dateUpdatedAt=" + dateUpdatedAt +
+                ", city='" + city + '\'' +
+                '}';
+    }
 
     public UUID getId() {
         return id;
