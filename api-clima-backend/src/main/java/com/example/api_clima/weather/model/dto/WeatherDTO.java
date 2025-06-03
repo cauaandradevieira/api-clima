@@ -1,12 +1,12 @@
 package com.example.api_clima.weather.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record WeatherDTO(@JsonProperty("main") TemperatureInfoDTO temperatureInfo,
-                         @JsonProperty("weather") List<WeatherDescriptionsDTO> weatherDescriptions,
-                         @JsonProperty("sys") WeatherCountryDTO weatherCountry)
+                         @JsonProperty("weather") List<WeatherDescriptionDTO> weatherDescription,
+                         @JsonProperty("sys") CountryInfoDTO country,
+                         @JsonProperty("dt") Integer date)
 {}

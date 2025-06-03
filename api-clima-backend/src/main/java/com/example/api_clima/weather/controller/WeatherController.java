@@ -2,16 +2,14 @@ package com.example.api_clima.weather.controller;
 
 import com.example.api_clima.weather.model.entity.Weather;
 import com.example.api_clima.weather.services.WeatherService;
-
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@NoArgsConstructor
+import java.util.List;
+
 @RestController
 @RequestMapping("/weather")
 public class WeatherController
@@ -19,17 +17,15 @@ public class WeatherController
     @Autowired
     private WeatherService weatherService;
 
-    @GetMapping("/{cidade}")
-    
-    public ResponseEntity<?> findWeather(@PathVariable String cidade)
+    @GetMapping("/forecast/{city}")
+    public List<Weather> findWeatherForecast(@PathVariable String city)
     {
-        Weather weather = weatherService.findValidWeather(cidade);
-        return ResponseEntity.ok(weather);
+        return weatherService.seachForecastWeatherFromApi(city);
     }
 
-    @GetMapping()
-    public ResponseEntity<?> findAllWeather()
+    @GetMapping("/{city}")
+    public Weather findWeather(@PathVariable  String city)
     {
-        return ResponseEntity.ok( weatherService.findAll() );
+        return weatherService.seachWeatherFromApi(city);
     }
 }

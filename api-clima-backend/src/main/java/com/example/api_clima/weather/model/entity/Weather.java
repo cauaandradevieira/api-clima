@@ -1,21 +1,15 @@
 package com.example.api_clima.weather.model.entity;
 
+import com.example.api_clima.weather.model.dto.CountryInfoDTO;
+import com.example.api_clima.weather.model.dto.TemperatureInfoDTO;
 import com.example.api_clima.weather.model.dto.WeatherDTO;
-import jakarta.persistence.*;
+import com.example.api_clima.weather.model.dto.WeatherDescriptionDTO;
 
 import java.time.Instant;
-import java.util.UUID;
 
-@Entity
-@Table(name = "weather_tb")
 public class Weather
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
     private String description;
-    private String icon;
     private String country;
 
     private Integer humidity;
@@ -23,43 +17,32 @@ public class Weather
     private Integer tempMin;
     private Integer tempMax;
 
-    private Instant dateCreatedAt;
-    private Instant dateUpdatedAt;
-
     private String city;
+
+    private Instant date;
 
     public Weather(WeatherDTO weatherDTO, String city)
     {
-        this.country = weatherDTO.weatherCountry().country();
-        this.description = weatherDTO.weatherDescriptions().getFirst().description();
-        this.icon = weatherDTO.weatherDescriptions().getFirst().icon();
+        this.city = city;
+        this.description = weatherDTO.weatherDescription().getFirst().description();
+        this.country = weatherDTO.country().country();
         this.humidity = weatherDTO.temperatureInfo().humidity();
-        this.temp =  weatherDTO.temperatureInfo().temp();
+        this.temp = weatherDTO.temperatureInfo().temp();
         this.tempMin = weatherDTO.temperatureInfo().tempMin();
         this.tempMax = weatherDTO.temperatureInfo().tempMax();
+        this.date = Instant.ofEpochSecond(weatherDTO.date());
+    }
+
+    public Weather(WeatherDTO weatherDTO, CountryInfoDTO countryInfoDTO, String city)
+    {
         this.city = city;
-        this.dateCreatedAt = Instant.now();
-        this.dateUpdatedAt = Instant.now();
-    }
-
-    public Weather() {}
-
-    @Override
-    public String toString() {
-        return "Weather{" +
-                "id=" + id +
-                ", dateCreatedAt=" + dateCreatedAt +
-                ", dateUpdatedAt=" + dateUpdatedAt +
-                ", city='" + city + '\'' +
-                '}';
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
+        this.description = weatherDTO.weatherDescription().getFirst().description();
+        this.country =countryInfoDTO.country();
+        this.humidity = weatherDTO.temperatureInfo().humidity();
+        this.temp = weatherDTO.temperatureInfo().temp();
+        this.tempMin = weatherDTO.temperatureInfo().tempMin();
+        this.tempMax = weatherDTO.temperatureInfo().tempMax();
+        this.date = Instant.ofEpochSecond(weatherDTO.date());
     }
 
     public String getDescription() {
@@ -68,14 +51,6 @@ public class Weather
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
     }
 
     public Integer getHumidity() {
@@ -92,22 +67,6 @@ public class Weather
 
     public void setTemp(Integer temp) {
         this.temp = temp;
-    }
-
-    public Instant getDateCreatedAt() {
-        return dateCreatedAt;
-    }
-
-    public void setDateCreatedAt(Instant dateCreatedAt) {
-        this.dateCreatedAt = dateCreatedAt;
-    }
-
-    public Instant getDateUpdatedAt() {
-        return dateUpdatedAt;
-    }
-
-    public void setDateUpdatedAt(Instant dateUpdatedAt) {
-        this.dateUpdatedAt = dateUpdatedAt;
     }
 
     public String getCity() {
@@ -129,4 +88,12 @@ public class Weather
     public Integer getTempMax() {return tempMax;}
 
     public void setTempMax(Integer tempMax) {this.tempMax = tempMax;}
+
+    public Instant getDate() {
+        return date;
+    }
+
+    public void setDate(Instant date) {
+        this.date = date;
+    }
 }

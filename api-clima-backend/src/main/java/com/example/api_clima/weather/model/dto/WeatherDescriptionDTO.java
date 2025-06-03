@@ -4,5 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record WeatherDescriptionsDTO(@JsonProperty("description") String description, @JsonProperty("icon") String icon) {
+public record WeatherDescriptionDTO(@JsonProperty("description") String description)
+{
+
 }

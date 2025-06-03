@@ -9,10 +9,10 @@ public class StringFormatter
 
     public static String formatStringCapalize(String city)
     {
-        String [] string = city.toLowerCase().trim().split(" "); // rio|de|janeiro
-        return Arrays.stream(string)
-            .map(StringUtils::capitalize)
-            .collect(Collectors.joining(" ")); // Rio De Janeiro
+        String [] string = city.toLowerCase().trim().split(" "); // pegando a cidade e removendo os espaços não desejados e colocando tudo para minusculo
+        return Arrays.stream(string)                    // estar fazendo um fluxo de cada elemento da lista
+            .map(StringUtils::capitalize)               // estar deixando todos os elementos do array com a primeira letra maiuscula
+            .collect(Collectors.joining(" "));  // estar fazendo de array virar uma string
     }
 
     /*public static String formatStringUrlEncoder(String city)
