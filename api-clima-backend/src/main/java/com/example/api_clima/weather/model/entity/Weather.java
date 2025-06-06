@@ -19,7 +19,10 @@ public class Weather
 
     private String city;
 
-    private Instant date;
+    private Integer timestampInSeconds;
+
+    public Weather() {
+    }
 
     public Weather(WeatherDTO weatherDTO, String city)
     {
@@ -30,7 +33,7 @@ public class Weather
         this.temp = weatherDTO.temperatureInfo().temp();
         this.tempMin = weatherDTO.temperatureInfo().tempMin();
         this.tempMax = weatherDTO.temperatureInfo().tempMax();
-        this.date = Instant.ofEpochSecond(weatherDTO.date());
+        this.timestampInSeconds = weatherDTO.date();
     }
 
     public Weather(WeatherDTO weatherDTO, CountryInfoDTO countryInfoDTO, String city)
@@ -42,7 +45,7 @@ public class Weather
         this.temp = weatherDTO.temperatureInfo().temp();
         this.tempMin = weatherDTO.temperatureInfo().tempMin();
         this.tempMax = weatherDTO.temperatureInfo().tempMax();
-        this.date = Instant.ofEpochSecond(weatherDTO.date());
+        this.timestampInSeconds = weatherDTO.date();
     }
 
     public String getDescription() {
@@ -89,11 +92,12 @@ public class Weather
 
     public void setTempMax(Integer tempMax) {this.tempMax = tempMax;}
 
-    public Instant getDate() {
-        return date;
+    public Integer getTimestampInSeconds() {
+        return timestampInSeconds;
     }
 
-    public void setDate(Instant date) {
-        this.date = date;
+    public void setTimestampInSeconds(Integer timestampInSeconds) {
+        this.timestampInSeconds = timestampInSeconds;
     }
+
 }

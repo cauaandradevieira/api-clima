@@ -1,15 +1,24 @@
 package com.example.api_clima.weather.services;
 
 import com.example.api_clima.constants.IConstApi;
+import com.example.api_clima.converter_dados.JsonMapper;
 import com.example.api_clima.redis.RedisServices;
 import com.example.api_clima.weather.model.dto.WeatherDTO;
 import com.example.api_clima.weather.model.dto.WeatherForecastDTO;
 import com.example.api_clima.weather.model.entity.Weather;
+import com.example.api_clima.weather.wapper.WeatherMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WeatherService implements IConstApi
@@ -19,20 +28,34 @@ public class WeatherService implements IConstApi
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<Weather> seachForecastWeatherFromApi(String city)
-    {
-        String urlFormatted = String.format(URL_FORECAST + KEY, city);
-        WeatherForecastDTO weatherForecastDTO = restTemplate.getForObject(urlFormatted, WeatherForecastDTO.class);
-        return weatherForecastDTO.listForecast().stream()
-                .map(w -> new Weather(w,weatherForecastDTO.country(),city))
-                .limit(5)
-                .toList();
+    public List<Weather> findAllRedisOrFromApi(String city) throws JsonProcessingException {
+        String json = "[{\"description\":\"Céu limpo\",\"country\":\"BR\",\"humidity\":65,\"temp\":28,\"tempMin\":25,\"tempMax\":32,\"city\":\"São Paulo\",\"timestampInSeconds\":1678901234},{\"description\":\"Chuva moderada\",\"country\":\"US\",\"humidity\":80,\"temp\":15,\"tempMin\":12,\"tempMax\":18,\"city\":\"Nova York\",\"timestampInSeconds\":1678905678},{\"description\":\"Nublado\",\"country\":\"JP\",\"humidity\":70,\"temp\":22,\"tempMin\":20,\"tempMax\":24,\"city\":\"Tóquio\",\"timestampInSeconds\":1678910000}]";
+        List<Weather> list = new JsonMapper(new ObjectMapper()).toObjectList(json, Weather.class);
+        if(!list.isEmpty())
+        {
+            System.out.println("pegou do json");
+            return list;
+        }
+        return seachForecastWeatherFromApi(city);
     }
 
-    public Weather seachWeatherFromApi(String city)
+    private List<Weather> seachForecastWeatherFromApi(String city)
+    {
+        String urlFormatted = String.format(URL_FORECAST + KEY, city);
+
+        WeatherForecastDTO weatherForecastDTO = restTemplate.getForObject(urlFormatted, WeatherForecastDTO.class);
+        return Optional.ofNullable(weatherForecastDTO)
+                .map(weatherForecast -> WeatherMapper.weatherForecastMapper(weatherForecast, city, 5))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: result from api not found."));
+    }
+
+
+    public Weather seachWeatherFromApi(String city) throws Exception
     {
         String urlFormatted = String.format(URL_WEATHER + KEY, city);
         WeatherDTO weatherDTO = restTemplate.getForObject(urlFormatted, WeatherDTO.class);
-        return new Weather(weatherDTO, city);
+        return Optional.ofNullable(weatherDTO)
+                .map(w -> WeatherMapper.weatherMapper(w, city))
+                .orElseThrow(() -> new Exception("conserte aaqui"));
     }
 }
