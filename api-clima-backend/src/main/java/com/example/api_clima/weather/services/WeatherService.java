@@ -9,6 +9,8 @@ import com.example.api_clima.weather.model.entity.Weather;
 import com.example.api_clima.weather.wapper.WeatherMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,20 +25,25 @@ import java.util.Optional;
 @Service
 public class WeatherService implements IConstApi
 {
+    private static final Logger log = LoggerFactory.getLogger(WeatherService.class);
     @Autowired
-    private RedisServices redis;
+    private RedisServices<Weather> redis;
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<Weather> findAllRedisOrFromApi(String city) throws JsonProcessingException {
-        String json = "[{\"description\":\"Céu limpo\",\"country\":\"BR\",\"humidity\":65,\"temp\":28,\"tempMin\":25,\"tempMax\":32,\"city\":\"São Paulo\",\"timestampInSeconds\":1678901234},{\"description\":\"Chuva moderada\",\"country\":\"US\",\"humidity\":80,\"temp\":15,\"tempMin\":12,\"tempMax\":18,\"city\":\"Nova York\",\"timestampInSeconds\":1678905678},{\"description\":\"Nublado\",\"country\":\"JP\",\"humidity\":70,\"temp\":22,\"tempMin\":20,\"tempMax\":24,\"city\":\"Tóquio\",\"timestampInSeconds\":1678910000}]";
-        List<Weather> list = new JsonMapper(new ObjectMapper()).toObjectList(json, Weather.class);
-        if(!list.isEmpty())
+    public List<Weather> findAllRedisOrFromApi(String city) throws JsonProcessingException
+    {
+
+        List<Weather> cacheList = redis.findAllByCache(city, Weather.class);
+
+        if(!cacheList.isEmpty())
         {
-            System.out.println("pegou do json");
-            return list;
+            return cacheList;
         }
-        return seachForecastWeatherFromApi(city);
+
+        List<Weather> forecasts = seachForecastWeatherFromApi(city);
+        redis.save(city, forecasts);
+        return forecasts;
     }
 
     private List<Weather> seachForecastWeatherFromApi(String city)

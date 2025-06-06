@@ -22,7 +22,8 @@ public class JsonMapper
 
     public <T> List<T> toObjectList(String json, Class<T> classType) throws JsonProcessingException
     {
-        return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, classType));
+        return mapper.readValue(json, mapper.getTypeFactory()
+                .constructCollectionType(List.class, classType));
     }
 
     public <T> String toJson(T object) throws JsonProcessingException {
