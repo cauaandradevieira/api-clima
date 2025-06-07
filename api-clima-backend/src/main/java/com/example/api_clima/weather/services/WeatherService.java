@@ -46,23 +46,39 @@ public class WeatherService implements IConstApi
         return forecasts;
     }
 
+    public Weather findRedisOrFromApi(String city) throws JsonProcessingException
+    {
+        Optional<Weather> optWeather = redis.findByCache(city, Weather.class);
+
+        if(optWeather.isPresent())
+        {
+            return optWeather.get();
+        }
+
+        Weather weather = seachWeatherFromApi(city);
+        redis.save(city, weather);
+        return weather;
+    }
+
     private List<Weather> seachForecastWeatherFromApi(String city)
     {
         String urlFormatted = String.format(URL_FORECAST + KEY, city);
 
         WeatherForecastDTO weatherForecastDTO = restTemplate.getForObject(urlFormatted, WeatherForecastDTO.class);
         return Optional.ofNullable(weatherForecastDTO)
-                .map(weatherForecast -> WeatherMapper.weatherForecastMapper(weatherForecast, city, 5))
+                .map(forecast -> WeatherMapper
+                        .weatherForecastMapper(forecast, city, 5))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: result from api not found."));
     }
 
 
-    public Weather seachWeatherFromApi(String city) throws Exception
+    private Weather seachWeatherFromApi(String city)
     {
         String urlFormatted = String.format(URL_WEATHER + KEY, city);
         WeatherDTO weatherDTO = restTemplate.getForObject(urlFormatted, WeatherDTO.class);
+
         return Optional.ofNullable(weatherDTO)
                 .map(w -> WeatherMapper.weatherMapper(w, city))
-                .orElseThrow(() -> new Exception("conserte aaqui"));
+                .orElseThrow(() -> new RuntimeException("conserte aaqui"));
     }
 }

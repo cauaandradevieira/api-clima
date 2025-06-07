@@ -27,21 +27,16 @@ public class RedisServices <T>
         this.jsonMapper = jsonMapper;
     }
 
-    public List<T> findAllByCache(String key, Class<T> classType) throws JsonProcessingException
+    public List<T> findAllByCache(String key, Class<T> tClass) throws JsonProcessingException
     {
         String json = redis.opsForValue().get(key);
-
-        if(json == null)
-        {
-            return Collections.emptyList();
-        }
-
-        return jsonMapper.toObjectList(json,classType);
+        return jsonMapper.toObjectList(json,tClass);
     }
 
-    public boolean isValidCache(String json)
+    public Optional<T> findByCache(String key, Class<T> tClass) throws JsonProcessingException
     {
-        return Optional.ofNullable(json).isPresent();
+        String json = redis.opsForValue().get(key);
+        return jsonMapper.toObject(json, tClass);
     }
 
     public void save(String key, T object) throws JsonProcessingException
@@ -54,6 +49,5 @@ public class RedisServices <T>
     {
         String json = jsonMapper.toJson(object);
         redis.opsForValue().set(key,json);
-        // salvando no redis
     }
 }

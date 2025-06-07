@@ -25,6 +25,6 @@ public class WeatherController
 
     @GetMapping("/{city}")
     public Weather findWeather(@PathVariable  String city) throws Exception {
-        return weatherService.seachWeatherFromApi(city);
+        return weatherService.findRedisOrFromApi(city);
     }
 }
