@@ -1,5 +1,7 @@
 package com.example.api_clima.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.convert.DurationUnit;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -13,30 +15,16 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Configuration
 @EnableCaching
 public class RedisConfig
 {
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory factory)
-    {
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext
-                        .SerializationPair
-                        .fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext
-                        .SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofHours(3));
-
-
-        return RedisCacheManager.builder(factory)
-                .cacheDefaults(config)
-                .build();
-    }
+    @Value("${redis.ttl}")
+    @DurationUnit(ChronoUnit.MINUTES)
+    private Duration durationCacheInRedis;
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
@@ -45,5 +33,12 @@ public class RedisConfig
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         return template;
+    }
+
+    @Bean
+    public Duration redisTtl()
+    {
+        System.out.println("Duration: " + durationCacheInRedis);
+        return this.durationCacheInRedis;
     }
 }

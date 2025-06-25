@@ -1,11 +1,7 @@
-package com.example.api_clima.weather.model.entity;
+package com.example.api_clima.weather;
 
-import com.example.api_clima.weather.model.dto.CountryInfoDTO;
-import com.example.api_clima.weather.model.dto.TemperatureInfoDTO;
-import com.example.api_clima.weather.model.dto.WeatherDTO;
-import com.example.api_clima.weather.model.dto.WeatherDescriptionDTO;
-
-import java.time.Instant;
+import com.example.api_clima.weather.dto.CountryInfoDTO;
+import com.example.api_clima.weather.dto.WeatherDTO;
 
 public class Weather
 {

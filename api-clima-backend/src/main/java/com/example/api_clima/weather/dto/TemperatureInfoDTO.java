@@ -1,4 +1,4 @@
-package com.example.api_clima.weather.model.dto;
+package com.example.api_clima.weather.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

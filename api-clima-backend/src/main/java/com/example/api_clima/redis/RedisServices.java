@@ -1,16 +1,11 @@
 package com.example.api_clima.redis;
 
-import com.example.api_clima.converter_dados.JsonMapper;
+import com.example.api_clima.convert_data.contract.DataMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,36 +13,37 @@ import java.util.Optional;
 public class RedisServices <T>
 {
     private final RedisTemplate<String,String> redis;
-    private final JsonMapper jsonMapper;
+    private final DataMapper dataMapper;
+    private final Duration durationCacheInRedis;
 
-    @Autowired
-    public RedisServices(RedisTemplate<String, String> redis, JsonMapper jsonMapper)
+    public RedisServices(RedisTemplate<String, String> redis, DataMapper dataMapper, Duration durationCacheInRedis)
     {
         this.redis = redis;
-        this.jsonMapper = jsonMapper;
+        this.dataMapper = dataMapper;
+        this.durationCacheInRedis = durationCacheInRedis;
     }
 
-    public List<T> findAllByCache(String key, Class<T> tClass) throws JsonProcessingException
+    public List<T> getAll(String key, Class<T> tClass)
     {
         String json = redis.opsForValue().get(key);
-        return jsonMapper.toObjectList(json,tClass);
+        return dataMapper.toObjectList(json,tClass);
     }
 
-    public Optional<T> findByCache(String key, Class<T> tClass) throws JsonProcessingException
+    public Optional<T> get(String key, Class<T> tClass)
     {
         String json = redis.opsForValue().get(key);
-        return jsonMapper.toObject(json, tClass);
+        return dataMapper.toObject(json, tClass);
     }
 
-    public void save(String key, T object) throws JsonProcessingException
+    public void save(String key, T object)
     {
-        String json = jsonMapper.toJson(object);
-        redis.opsForValue().set(key,json);
+        String json = dataMapper.toJson(object);
+        redis.opsForValue().set(key,json,durationCacheInRedis);
     }
 
-    public void save(String key, List<T> object) throws JsonProcessingException
+    public void save(String key, List<T> object)
     {
-        String json = jsonMapper.toJson(object);
-        redis.opsForValue().set(key,json);
+        String json = dataMapper.toJson(object);
+        redis.opsForValue().set(key,json,durationCacheInRedis);
     }
 }

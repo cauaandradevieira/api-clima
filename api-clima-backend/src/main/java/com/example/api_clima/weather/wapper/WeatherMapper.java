@@ -1,8 +1,8 @@
 package com.example.api_clima.weather.wapper;
 
-import com.example.api_clima.weather.model.dto.WeatherDTO;
-import com.example.api_clima.weather.model.dto.WeatherForecastDTO;
-import com.example.api_clima.weather.model.entity.Weather;
+import com.example.api_clima.weather.dto.WeatherDTO;
+import com.example.api_clima.weather.dto.WeatherForecastDTO;
+import com.example.api_clima.weather.Weather;
 
 import java.time.Instant;
 import java.time.ZoneId;
