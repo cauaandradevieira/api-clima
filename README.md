@@ -1,4 +1,4 @@
-# 🌤️ Previsão do Tempo - Spring Boot + Redis + Frontend
+# 🌤️ Previsão do Tempo - Spring Boot + Redis + Frontend ( Não finalizado )
 
 Este projeto é uma aplicação simples de previsão do tempo, que permite ao usuário pesquisar a temperatura de uma cidade usando uma interface web amigável. A aplicação utiliza **Spring Boot** no backend com **Redis** para cache, e uma interface frontend com **HTML**, **CSS**, **Bootstrap** e **JavaScript**.
 
